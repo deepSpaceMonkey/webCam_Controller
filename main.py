@@ -6,6 +6,10 @@ capture = cv2.VideoCapture(0)
 
 blue_lower=np.array([100,150,0],np.uint8) # RGB combo
 blue_upper=np.array([140,255,255],np.uint8)
+green_lower = np.array([40, 40,40])
+green_upper = np.array([70, 255,255])
+
+prev_y = 0
 
 while True:
     ret, frame = capture.read()    # We need this inside the while loop to get multiple frames (video)
@@ -18,8 +22,14 @@ while True:
         area = cv2.contourArea(c)
         if area > 40000:    # Much less "noise". Anything that is smaller than object size does not get registered
             x, y, w, h = cv2.boundingRect(c)
-            cv2.rectangle(frame)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0,), 2)    # turn into rectangle for concrete coordinates
             # cv2.drawContours(frame, c, -1, (0, 255, 0), 2)    # Will draw around the object, to be used in scrolling
+            if prev_y < y:    # my y axis seems to be inverted
+                print ('moving down')
+            if prev_y > y:
+                print ('moving up')
+            prev_y = y
+
 
     cv2.imshow('frame', frame)
    #  cv2.imshow('mask', mask)
